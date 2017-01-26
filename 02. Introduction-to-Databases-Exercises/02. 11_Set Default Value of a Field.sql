@@ -1,0 +1,5 @@
+ALTER TABLE Userss
+DROP CONSTRAINT [PK_userssKey]
+
+ALTER TABLE Userss
+ 

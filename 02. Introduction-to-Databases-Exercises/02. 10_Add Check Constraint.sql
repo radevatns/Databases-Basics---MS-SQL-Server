@@ -1,0 +1,3 @@
+ALTER TABLE Userss
+ADD CONSTRAINT dataTimeNow
+DEFAULT GETDATE() FOR LastLoginTime

@@ -109,14 +109,6 @@ SELECT CountryName
 FROM Countries
 ORDER BY CountryName
 
-SELECT* 
-FROM Countries
-ORDER BY CountryName
-
-
-
-
-
 --25. All Diablo Characters
 USE Diablo
 SELECT Name FROM Characters

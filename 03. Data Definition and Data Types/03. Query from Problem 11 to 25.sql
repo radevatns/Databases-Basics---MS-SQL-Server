@@ -84,6 +84,11 @@ WHERE DepartmentID IN (1,2,4,11)
 
 SELECT Salary FROM Employees
 
+--OPTION 2
+UPDATE Employees
+SET Salary = (Salary *1.12)
+WHERE DepartmentId IN (SELECT DepartmentId FROM Departments
+WHERE Name IN 'Engineering', 'Tool Design', 'Marketing', 'Information Services'))
 
 
 --22. All Mountain Peaks
@@ -102,12 +107,19 @@ WHERE ContinentCode = 'EU'
 ORDER BY [Population] DESC, CountryName
 
 --24. Countries and Currency (Euro / Not Euro)
+GO
+
 USE Geography
 SELECT CountryName
-,CountryCode
-,CurrencyCode
+,CountryCode,
+CASE
+WHEN CurrencyCode = 'EUR' THEN 'Euro'
+ELSE 'Not Euro'
+END AS Currency
 FROM Countries
 ORDER BY CountryName
+GO 
+SELECT * FROM Countries
 
 --25. All Diablo Characters
 USE Diablo

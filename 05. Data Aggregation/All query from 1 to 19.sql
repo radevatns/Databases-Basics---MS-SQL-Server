@@ -11,7 +11,7 @@
   FROM WizzardDeposits
   GROUP BY DepositGroup
 
-  --04. Smallest Deposit Group per Magic Wand Size
+  --04. Smallest Deposit Group per Magic Wand Size --- to do
   SELECT DepositGroup, AVG(MagicWandSize) AS LongestMagicWand
   FROM WizzardDeposits
   HAVING AVG(MagicWandSize)=SELECT FROM
@@ -22,7 +22,7 @@
   GROUP BY DepositGroup
   ORDER BY LongestMagicWand
   -- to do obqsneno na uprajnenie 31.01.2017
-
+  -- to do
   --05. Deposits Sum
   SELECT DepositGroup, SUM(DepositAmount)AS 'TotalSum' 
   FROM WizzardDeposits 
@@ -81,12 +81,47 @@
   ORDER BY FirstLetter
   
   --11. Average Interest
+  SELECT DepositGroup, IsDepositExpired, AVG(DepositInterest) AS 'AverageInterest' FROM WizzardDeposits
+  WHERE DepositStartDate  > '1985/01/01'
+  GROUP BY DepositGroup,IsDepositExpired
+  ORDER BY DepositGroup DESC, IsDepositExpired
+
   --12. Rich Wizard, Poor Wizard
+  -- to do
+   
   --13. Departments Total Salaries
+  USE SoftUni
+  SELECT DepartmentID, SUM(Salary) AS TotalSalary FROM Employees
+  GROUP BY DepartmentID
+  ORDER BY DepartmentID
+
   --14. Employees Minimum Salaries
+ SELECT DepartmentID, MIN(Salary) AS MinimumSalary FROM Employees
+  WHERE HireDate > '2000/01/01' AND DepartmentID IN (2,5,7)
+  GROUP BY DepartmentID
+
   --15. Employees Average Salaries
+  SELECT * INTO NewTable FROM Employees -- new table
+  WHERE Salary > 30000
+
+  DELETE FROM NewTable   --delete
+  WHERE ManagerID = 42
+
+  UPDATE NewTable --set salary
+  SET Salary+=5000
+  WHERE DepartmentID = 1
+
+  SELECT DepartmentID, AVG(Salary) AS AverageSalary FROM NewTable -- view grouped and avg salary
+  GROUP BY DepartmentID
+
   --16. Employees Maximum Salaries
+  SELECT DepartmentID, MAX(Salary) AS MaxSalary FROM Employees
+  GROUP BY DepartmentID
+  HAVING MAX(Salary) NOT BETWEEN 30000 AND 70000
+
   --17. Employees Count Salaries
+  SELECT COUNT(ManagerID) AS Count FROM Employees
+  WHERE ManagerID IS NULL
   --18. 3rd Highest Salary
   -- to do obqsneno na uprajnenie 31.01.2017
   --19. Salary Challenge

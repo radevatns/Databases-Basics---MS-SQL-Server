@@ -1,7 +1,9 @@
   --01. Records’ Count
+  GO
+  USE Gringotts
    SELECT COUNT (FirstName) AS Counsts
   FROM [dbo].[WizzardDeposits]
-
+  GO
   --02. Longest Magic Wand
   SELECT MAX(MagicWandSize) AS LongestMagicWand
   FROM WizzardDeposits
@@ -12,17 +14,27 @@
   GROUP BY DepositGroup
 
   --04. Smallest Deposit Group per Magic Wand Size --- to do
-  SELECT DepositGroup, AVG(MagicWandSize) AS LongestMagicWand
-  FROM WizzardDeposits
-  HAVING AVG(MagicWandSize)=SELECT FROM
-							(
-							SELECT DepositGroup,AVG(MagicWandSize) AS AvgMagic
-							FROM WizzardDeposits
-							)
+  GO
+  USE Gringotts 
+  SELECT * FROM WizzardDeposits
+  SELECT  DepositGroup FROM WizzardDeposits
   GROUP BY DepositGroup
-  ORDER BY LongestMagicWand
-  -- to do obqsneno na uprajnenie 31.01.2017
-  -- to do
+  HAVING AVG(MagicWandSize) =	(
+								SELECT MIN(wizardWandSize.avgMagicWandSize) FROM
+									 (
+									SELECT DepositGroup,AVG(MagicWandSize) AS avgMagicWandSize FROM WizzardDeposits
+									GROUP BY DepositGroup
+									) AS wizardWandSize
+								)
+
+ -- OPTION 2
+ SELECT TOP 1 with ties DepositGroup,AVG(MagicWandSize) FROM WizzardDeposits
+  GROUP BY DepositGroup
+  ORDER BY AVG(MagicWandSize)
+
+
+  
+  GO
   --05. Deposits Sum
   SELECT DepositGroup, SUM(DepositAmount)AS 'TotalSum' 
   FROM WizzardDeposits 
@@ -120,8 +132,12 @@
   HAVING MAX(Salary) NOT BETWEEN 30000 AND 70000
 
   --17. Employees Count Salaries
-  SELECT COUNT(ManagerID) AS Count FROM Employees
-  WHERE ManagerID IS NULL
+  
+ SELECT COUNT(nullSalary.Salary) 
+ FROM
+  (SELECT Salary FROM Employees
+  WHERE ManagerID IS NULL) AS nullSalary
+
   --18. 3rd Highest Salary
   -- to do obqsneno na uprajnenie 31.01.2017
   --19. Salary Challenge

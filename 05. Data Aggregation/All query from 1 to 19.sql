@@ -1,0 +1,92 @@
+  --01. Records’ Count
+   SELECT COUNT (FirstName) AS Counsts
+  FROM [dbo].[WizzardDeposits]
+
+  --02. Longest Magic Wand
+  SELECT MAX(MagicWandSize) AS LongestMagicWand
+  FROM WizzardDeposits
+
+  --03. Longest Magic Wand per Deposit Groups
+  SELECT DepositGroup, MAX(MagicWandSize) AS LongestMagicWand
+  FROM WizzardDeposits
+  GROUP BY DepositGroup
+
+  --04. Smallest Deposit Group per Magic Wand Size
+  SELECT DepositGroup, AVG(MagicWandSize) AS LongestMagicWand
+  FROM WizzardDeposits
+  HAVING AVG(MagicWandSize)=SELECT FROM
+							(
+							SELECT DepositGroup,AVG(MagicWandSize) AS AvgMagic
+							FROM WizzardDeposits
+							)
+  GROUP BY DepositGroup
+  ORDER BY LongestMagicWand
+  -- to do obqsneno na uprajnenie 31.01.2017
+
+  --05. Deposits Sum
+  SELECT DepositGroup, SUM(DepositAmount)AS 'TotalSum' 
+  FROM WizzardDeposits 
+  GROUP BY DepositGroup
+
+  --06. Deposits Sum for Ollivander Family
+  SELECT DepositGroup, SUM(DepositAmount) AS 'TotalSum'
+  FROM WizzardDeposits
+  WHERE MagicWandCreator = 'Ollivander Family'
+  GROUP BY DepositGroup 
+  
+  --07. Deposits Filter
+   SELECT DepositGroup, SUM(DepositAmount) AS 'TotalSum'
+  FROM WizzardDeposits
+  WHERE MagicWandCreator = 'Ollivander Family'
+  GROUP BY DepositGroup
+  HAVING SUM(DepositAmount) < 150000
+  ORDER BY TotalSum DESC
+   
+  --08. Deposit Charge
+  SELECT DepositGroup
+  , MagicWandCreator
+  , MIN(DepositCharge) AS MinDepositCharge
+  FROM WizzardDeposits
+  GROUP BY DepositGroup,MagicWandCreator
+  ORDER BY MagicWandCreator,DepositGroup
+  
+  --09. Age Groups
+  SELECT CASE
+  WHEN Age BETWEEN 0 AND 10 THEN '[0-10]'
+  WHEN Age BETWEEN 11 AND 20 THEN '[11-20]'
+  WHEN Age BETWEEN 21 AND 30 THEN '[21-30]'
+  WHEN Age BETWEEN 31 AND 40 THEN '[31-40]'
+  WHEN Age BETWEEN 41 AND 50 THEN '[41-50]'
+  WHEN Age BETWEEN 51 AND 60 THEN '[51-60]'
+  WHEN Age >= 61 THEN '[61+]' 
+  END AS AgeGroup,
+  COUNT (Id) AS WizardCount
+  FROM WizzardDeposits
+
+  GROUP BY CASE
+  WHEN Age BETWEEN 0 AND 10 THEN '[0-10]'
+  WHEN Age BETWEEN 11 AND 20 THEN '[11-20]'
+  WHEN Age BETWEEN 21 AND 30 THEN '[21-30]'
+  WHEN Age BETWEEN 31 AND 40 THEN '[31-40]'
+  WHEN Age BETWEEN 41 AND 50 THEN '[41-50]'
+  WHEN Age BETWEEN 51 AND 60 THEN '[51-60]'
+  WHEN Age >= 61 THEN '[61+]' 
+  END
+  
+  --10. First Letter
+  USE GRingotts
+  SELECT LEFT(FirstName, 1) AS FirstLetter FROM WizzardDeposits
+  WHERE DepositGroup = 'Troll Chest'
+  GROUP BY LEFT(FirstName, 1)
+  ORDER BY FirstLetter
+  
+  --11. Average Interest
+  --12. Rich Wizard, Poor Wizard
+  --13. Departments Total Salaries
+  --14. Employees Minimum Salaries
+  --15. Employees Average Salaries
+  --16. Employees Maximum Salaries
+  --17. Employees Count Salaries
+  --18. 3rd Highest Salary
+  -- to do obqsneno na uprajnenie 31.01.2017
+  --19. Salary Challenge

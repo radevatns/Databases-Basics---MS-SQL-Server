@@ -211,9 +211,123 @@ ALTER TABLE Items
 ADD CONSTRAINT FK_Items_ItemTypeID
 FOREIGN KEY (ItemTypeID)
 REFERENCES ItemTypes(ItemTypeID)
+GO
 
- 
+-- option two short version
+CREATE DATABASE OnlineStore2
+USE OnlineStore2
+GO
+CREATE TABLE Cities(
+CityID INT PRIMARY KEY,
+Name VARCHAR(50) NOT NULL)
+
+CREATE TABLE Customers(
+CustomerID INT PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Birthday DATE,
+CityID INT NOT NULL,
+CONSTRAINT FK_Customers_Cities
+	FOREIGN KEY (CityID) REFERENCES Cities(CityID)
+)
+
+CREATE TABLE Orders(
+OrderID INT PRIMARY KEY,
+CustomerID INT NOT NULL,
+CONSTRAINT FK_Orders_Customers
+	FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+)
+
+CREATE TABLE ItemTypes(
+ItemTypeID INT PRIMARY KEY,
+Name VARCHAR(50) NOT NULL)
+
+CREATE TABLE Items(
+ItemID INT PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+ItemTypeID INT NOT NULL,
+CONSTRAINT FK_Items_ItemTypes
+	FOREIGN KEY (ItemTypeID) REFERENCES ItemTypes(ItemTypeID)
+)
+
+CREATE TABLE OrderItems(
+OrderID INT NOT NULL,
+ItemID INT NOT NULL,
+CONSTRAINT PK_OrderItems PRIMARY KEY (OrderID, ItemID),
+CONSTRAINT FK_OrderItems_Orders
+	FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+CONSTRAINT FK_OrderItems_Items
+	FOREIGN KEY (ItemID) REFERENCES Items(ItemID)
+)
 GO
 
 --06. University Database
+
+CREATE DATABASE University 
+USE University 
+
+CREATE TABLE Majors
+(
+	MajorID INT NOT NULL PRIMARY KEY,
+	Name NVARCHAR(50)
+)
+
+CREATE TABLE Students
+(
+	StudentID INT NOT NULL PRIMARY KEY,
+	StudentNumber INT, 
+	StudentName NVARCHAR(50),
+	MajorID INT
+	CONSTRAINT FK_Students_MajorID
+	FOREIGN KEY (MajorID)
+	REFERENCES Majors(MajorID)  
+)
+CREATE TABLE Payments
+(
+	PaymentID INT NOT NULL PRIMARY KEY,
+	PaymentDate DATE,
+	PaymentAmount MONEY,
+	StudentID INT
+	CONSTRAINT FK_Payments_StudentID
+	FOREIGN KEY (StudentID)
+	REFERENCES Students(StudentID) 	
+)
+CREATE TABLE Subjects
+(
+	SubjectID INT NOT NULL PRIMARY KEY,
+	SubjectName NVARCHAR(50)
+)
+CREATE TABLE Agenda
+(
+	StudentID INT,
+	SubjectID INT
+	CONSTRAINT PK_Agenda_StudentSubject
+	PRIMARY KEY (StudentID,SubjectID)
+	CONSTRAINT FK_Agenda_Student
+	FOREIGN KEY (StudentID)
+	REFERENCES Students(StudentID),
+	CONSTRAINT FK_Agenda_Subject
+	FOREIGN KEY (SubjectID)	
+	REFERENCES Subjects(SubjectID)
+)
+
 --09. *Peaks in Rila
+USE Geography
+SELECT MountainRange FROM Mountains AS m
+	JOIN SELECT PeakName,Elevation FROM Peaks AS p ON
+	   m.Id = p.MountainsId
+
+SELECT * FROM Mountains
+SELECT * FROM Peaks
+
+SELECT Mountains.MountainRange, Peaks.PeakName, Peaks.Elevation FROM Mountains
+JOIN Peaks ON Peaks.MountainId=Mountains.Id
+WHERE MountainRange = 'Rila'
+ORDER BY Elevation DESC
+
+
+
+
+								  
+
+
+ SELECT * FROM Peaks

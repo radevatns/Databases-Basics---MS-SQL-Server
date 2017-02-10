@@ -311,23 +311,13 @@ CREATE TABLE Agenda
 )
 
 --09. *Peaks in Rila
+GO
 USE Geography
-SELECT MountainRange FROM Mountains AS m
-	JOIN SELECT PeakName,Elevation FROM Peaks AS p ON
-	   m.Id = p.MountainsId
 
-SELECT * FROM Mountains
-SELECT * FROM Peaks
-
-SELECT Mountains.MountainRange, Peaks.PeakName, Peaks.Elevation FROM Mountains
-JOIN Peaks ON Peaks.MountainId=Mountains.Id
+SELECT Mountains.MountainRange, Peaks.PeakName, Peaks.Elevation 
+	FROM Mountains
+	JOIN Peaks 
+	ON Peaks.MountainId=Mountains.Id
 WHERE MountainRange = 'Rila'
 ORDER BY Elevation DESC
-
-
-
-
-								  
-
-
- SELECT * FROM Peaks
+GO

@@ -43,7 +43,7 @@ CREATE PROCEDURE usp_GetEmployeesFromTown(@TownName NVARCHAR(50))
  
 --  05. Salary Level Function
 
-ALTER FUNCTION ufn_GetSalaryLevel(@salary MONEY)
+CREATE FUNCTION ufn_GetSalaryLevel(@salary MONEY)
 	RETURNS NVARCHAR(7)
 		BEGIN
 			IF (@salary < 30000)
@@ -104,10 +104,98 @@ AS
 	WHERE dbo.ufn_GetSalaryLevel(Salary) = @CustomName
 	END
 
-
+usp_EmployeesBySalaryLevel Low
 
 --  07. Define Function
+	GO			
+CREATE FUNCTION ufn_IsWordComprised (@setOfLetters NVARCHAR(50), @word NVARCHAR(50))
+RETURNS BIT
+AS
+BEGIN
+	DECLARE @lengh INT = LEN(@word)
+	DECLARE @index INT = 1
+ 	WHILE (@index <= @lengh)
+		BEGIN
+			DECLARE @char CHAR(1)= SUBSTRING(@word,@index,1)
+			IF(CHARINDEX(@char,@setOfLetters)<=0)
+				BEGIN
+					RETURN 0
+				END
+			SET @index = @index + 1
+		END
+	RETURN 1 
+END
+
+SELECT dbo.ufn_IsWordComprised ('oistmiahf','halves') 
+   GO
 --  08. Delete Employees and Departments
+GO
+
+ALTER TABLE Departments
+ALTER COLUMN ManagerID INT NULL
+
+SELECT e.EmployeeID,e.FirstName,e.DepartmentID,d.Name, d.ManagerID FROM Employees AS e
+	JOIN Departments as d
+	ON e.DepartmentID = d.DepartmentID
+	WHERE d.Name IN ('Production','Production Control')
+
+DELETE FROM EmployeesProjects
+WHERE EmployeeID IN (
+					 SELECT e.EmployeeID FROM Employees AS e
+					JOIN Departments as d
+					ON e.DepartmentID = d.DepartmentID
+					WHERE d.Name IN ('Production','Production Control')
+					)
+UPDATE Employees
+SET ManagerID = NULL
+WHERE ManagerID IN (
+					 SELECT e.EmployeeID FROM Employees AS e
+					JOIN Departments as d
+					ON e.DepartmentID = d.DepartmentID
+					WHERE d.Name IN ('Production','Production Control')
+					)
+
+
+UPDATE Departments
+SET ManagerID = NULL
+WHERE ManagerID IN (
+					SELECT e.EmployeeID FROM Employees AS e
+					JOIN Departments as d
+					ON e.DepartmentID = d.DepartmentID
+					WHERE d.Name IN ('Production','Production Control')
+					)
+
+DELETE FROM Employees
+WHERE EmployeeID IN (
+					 SELECT e.EmployeeID FROM Employees AS e
+					JOIN Departments as d
+					ON e.DepartmentID = d.DepartmentID
+					WHERE d.Name IN ('Production','Production Control')
+					)
+DELETE FROM Departments
+WHERE Name IN ('Production','Production Control')
+
+SELECT * FROM Employees
+SELECT * FROM Projects
+SELECT * FROM EmployeesProjects
+SELECT * FROM Departments
+
+ -- option 2
+ BEGIN TRANSACTION 
+ALTER TABLE EmployeesProjects
+DROP CONSTRAINT FK_EmployeesProjects_Employees
+ALTER TABLE Departments
+DROP CONSTRAINT FK_Departments_Employees
+ALTER TABLE Employees
+DROP CONSTRAINT FK_Employees_Employees
+DELETE FROM Employees
+WHERE DepartmentID IN (7,8)
+DELETE FROM Departments
+WHERE DepartmentID IN (7,8)
+
+ROLLBACK
+
+GO
 --  09. Employees with Three Projects
 --  10. Find Full Name
 --  11. People with Balance Higher Than

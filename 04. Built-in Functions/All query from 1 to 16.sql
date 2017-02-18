@@ -76,14 +76,62 @@ SELECT CountryName, ISOCode FROM Countries
 WHERE CountryName LIKE '%a%'
 ORDER BY IsoCode
 
---11. Mix of Peak and River Names
+--11. Mix of Peak and River Names	-- !!! bottom !!
+		 
+SELECT p.PeakName, r.RiverName, lower(p.PeakName + SUBSTRING(r.RiverName, 2, len(r.RiverName)-1)) AS Mix
+	FROM Peaks p
+	JOIN Rivers r
+	ON RIGHT(p.PeakName, 1) = LEFT(r.RiverName, 1)
+	ORDER BY Mix
 
-SELECT p.PeakName, r.RiverName 
-FROM Peaks p
-JOIN Rivers r
 -- to do
 --12. Games From 2011 and 2012 Year
+
+SELECT TOP 50 Name, CONVERT(char(10), Start, 126) FROM Games
+	WHERE YEAR(Start) = '2011' OR YEAR(Start) = '2012'
+	ORDER BY Start, Name
+
+
+
 --13. User Email Providers
+
+SELECT TOP 50 Name, CONVERT(char(10), Start, 126) FROM Games
+	WHERE YEAR(Start) = '2011' OR YEAR(Start) = '2012'
+	ORDER BY Start, Name
+
+
+ SELECT Username, SUBSTRING(Email, CHARINDEX('@', Email)+1, len(Email)) AS 'Email Provider' FROM Users
+	ORDER BY 'Email Provider', Username
+
+
 --14. Get Users with IPAddress Like Pattern
+
+SELECT Username, IpAddress AS 'IP Address' FROM Users
+WHERE IpAddress LIKE '___.1_%._%.___'
+ORDER BY Username
+
+
 --15. Show All Games with Duration
+	   SELECT Name AS Game, 'Part Of The Day' =
+	CASE 
+		WHEN (DATEPART(HOUR, Start)) BETWEEN 0 AND 11 THEN 'Morning'
+		WHEN (DATEPART(HOUR, Start)) BETWEEN 12 AND 17  THEN 'Afternoon'
+		WHEN (DATEPART(HOUR, Start)) BETWEEN 18 AND 23  THEN 'Evening'
+	END,
+	Duration = 
+	CASE 
+		WHEN Duration <= 3 THEN 'Extra Short'
+		WHEN Duration >= 4 AND Duration <=6 THEN 'Short'
+		WHEN Duration > 6 THEN 'Long'
+		WHEN Duration IS NULL THEN 'Extra Long'
+	END
+FROM Games
+ORDER BY Game, Duration, 'Part Of The Day'
+
 --16. Orders Table
+SELECT ProductName
+,OrderDate
+,DATEADD(Day, 3, OrderDate) AS 'Pay Due',
+DATEADD(Month, 1, OrderDate) AS 'Deliver Due'
+FROM Orders
+

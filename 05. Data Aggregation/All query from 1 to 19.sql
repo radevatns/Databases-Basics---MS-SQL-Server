@@ -99,7 +99,14 @@
   ORDER BY DepositGroup DESC, IsDepositExpired
 
   --12. Rich Wizard, Poor Wizard
-  -- to do
+	  USE Gringotts
+SELECT SUM(SumDiff.SumDifference)
+FROM
+	(SELECT h.DepositAmount - (SELECT DepositAmount 
+								FROM WizzardDeposits
+								WHERE Id = h.Id + 1
+								) AS SumDifference
+	 FROM WizzardDeposits h) AS SumDiff
    
   --13. Departments Total Salaries
   USE SoftUni
@@ -132,12 +139,30 @@
   HAVING MAX(Salary) NOT BETWEEN 30000 AND 70000
 
   --17. Employees Count Salaries
-  
+  	 USE SoftUni
  SELECT COUNT(nullSalary.Salary) 
  FROM
   (SELECT Salary FROM Employees
   WHERE ManagerID IS NULL) AS nullSalary
 
+ SELECT * FROM Employees
+
   --18. 3rd Highest Salary
   -- to do obqsneno na uprajnenie 31.01.2017
+
+  SELECT DepartmentID, 
+	(SELECT DISTINCT Salary FROM Employees 
+	 WHERE DepartmentID = e.DepartmentID 
+	 ORDER BY Salary DESC OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY) AS ThirdHighestSalary
+FROM Employees e
+WHERE (SELECT DISTINCT Salary FROM Employees 
+	 WHERE DepartmentID = e.DepartmentID 
+	 ORDER BY Salary DESC OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY) IS NOT NULL
+GROUP BY DepartmentID
   --19. Salary Challenge
+
+
+  SELECT TOP 10 e.FirstName, e.LastName, e.DepartmentId FROM Employees e
+WHERE e.Salary  > (SELECT AVG(s.Salary)
+					FROM (SELECT Salary, DepartmentID FROM Employees) AS s
+					WHERE DepartmentID = e.DepartmentID)
